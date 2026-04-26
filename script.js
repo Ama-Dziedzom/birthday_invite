@@ -1,143 +1,116 @@
-/* ── Intersection Observer — fade-in on scroll ─────────────── */
-const observerOptions = {
-  threshold: 0.12,
-  rootMargin: '0px 0px -40px 0px',
-};
+let currentPage = 1;
+const totalPages = 5;
 
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      observer.unobserve(entry.target);
+const pages = document.querySelectorAll('.page');
+const nextBtn = document.getElementById('nextBtn');
+const prevBtn = document.getElementById('prevBtn');
+const pageCounter = document.getElementById('pageCounter');
+
+function updatePage(direction = 'forward') {
+  pages.forEach((page, i) => {
+    const pageNum = i + 1;
+    
+    // Reset all custom state classes
+    page.classList.remove('active', 'flipped', 'next-up', 'flipping-forward', 'flipping-backward');
+    
+    if (pageNum === currentPage) {
+      page.classList.add('active');
+      // Apply the 'curl' animation if it was just flipped to active
+      if (direction === 'backward') page.classList.add('flipping-backward');
+    } else if (pageNum < currentPage) {
+      page.classList.add('flipped');
+      // Apply the 'curl' animation if it was just flipped away
+      if (pageNum === currentPage - 1 && direction === 'forward') {
+        page.classList.add('flipping-forward');
+      }
+      
+      if (pageNum !== currentPage - 1) {
+        page.style.visibility = 'hidden';
+      } else {
+        page.style.visibility = 'visible';
+      }
+    } else if (pageNum === currentPage + 1) {
+      page.classList.add('next-up');
+      page.style.visibility = 'visible';
+    } else {
+      page.style.visibility = 'hidden';
     }
   });
-}, observerOptions);
 
-document.querySelectorAll('.fade-in').forEach((el) => observer.observe(el));
+  prevBtn.disabled = (currentPage === 1);
+  nextBtn.disabled = (currentPage === totalPages);
+  pageCounter.textContent = `${currentPage} / ${totalPages}`;
+}
 
-/* ── Stagger children of fade-in containers ────────────────── */
-document.querySelectorAll('.about__details, .dresscode__grid, .palette__swatches, .gallery__grid').forEach((parent) => {
-  Array.from(parent.children).forEach((child, i) => {
-    child.style.transitionDelay = `${i * 0.1}s`;
-  });
+nextBtn.addEventListener('click', () => {
+  if (currentPage < totalPages) {
+    currentPage++;
+    updatePage('forward');
+  }
 });
 
-/* ── RSVP Form ─────────────────────────────────────────────── */
+prevBtn.addEventListener('click', () => {
+  if (currentPage > 1) {
+    currentPage--;
+    updatePage('backward');
+  }
+});
+
+// Click on book to flip forward
+document.getElementById('book').addEventListener('click', (e) => {
+  // Don't flip if clicking a button or input
+  if (e.target.closest('button, input, label')) return;
+  
+  if (currentPage < totalPages) {
+    currentPage++;
+    updatePage('forward');
+  }
+});
+
+/* ── Swipe Support for Mobile ─────────────────────────────── */
+let touchStartX = 0;
+let touchEndX = 0;
+
+document.addEventListener('touchstart', e => {
+  touchStartX = e.changedTouches[0].screenX;
+});
+
+document.addEventListener('touchend', e => {
+  touchEndX = e.changedTouches[0].screenX;
+  handleSwipe();
+});
+
+function handleSwipe() {
+  const threshold = 50;
+  if (touchStartX - touchEndX > threshold) {
+    // Swipe left -> Next
+    if (currentPage < totalPages) {
+      currentPage++;
+      updatePage();
+    }
+  } else if (touchEndX - touchStartX > threshold) {
+    // Swipe right -> Prev
+    if (currentPage > 1) {
+      currentPage--;
+      updatePage();
+    }
+  }
+}
+
+/* ── Form Logic ────────────────────────────────────────────── */
 const form = document.getElementById('rsvpForm');
 const successMsg = document.getElementById('formSuccess');
 
 if (form) {
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-
-    const name = form.querySelector('#name').value.trim();
-    const attendance = form.querySelector('input[name="attendance"]:checked');
-
-    if (!name) {
-      shakeField(form.querySelector('#name'));
-      return;
-    }
-
-    if (!attendance) {
-      shakeField(form.querySelector('.radio-group'));
-      return;
-    }
-
-    /* Simulate submission */
-    const btn = form.querySelector('.btn');
-    btn.textContent = 'Sending…';
+    const btn = form.querySelector('.btn-submit');
+    btn.textContent = '...';
     btn.disabled = true;
 
     setTimeout(() => {
-      form.querySelectorAll('input, textarea, .btn').forEach((el) => {
-        el.disabled = true;
-      });
-      btn.style.display = 'none';
-      successMsg.classList.add('visible');
-      successMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }, 900);
+      form.querySelector('input').disabled = true;
+      successMsg.style.display = 'block';
+    }, 1000);
   });
 }
-
-function shakeField(el) {
-  el.animate(
-    [
-      { transform: 'translateX(0)' },
-      { transform: 'translateX(-6px)' },
-      { transform: 'translateX(6px)' },
-      { transform: 'translateX(-4px)' },
-      { transform: 'translateX(4px)' },
-      { transform: 'translateX(0)' },
-    ],
-    { duration: 380, easing: 'ease-in-out' }
-  );
-}
-
-/* ── Soft parallax on hero ─────────────────────────────────── */
-const hero = document.querySelector('.hero');
-
-if (hero && window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
-  const heroInner = hero.querySelector('.hero__inner');
-
-  window.addEventListener('scroll', () => {
-    const scrollY = window.scrollY;
-    if (scrollY < window.innerHeight) {
-      heroInner.style.transform = `translateY(${scrollY * 0.18}px)`;
-      hero.style.setProperty('--parallax-offset', `${scrollY * 0.08}px`);
-    }
-  }, { passive: true });
-}
-
-/* ── Smooth active nav highlight (optional, future nav) ────── */
-const sections = document.querySelectorAll('section[id]');
-
-const navObserver = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        document.querySelectorAll('a[href^="#"]').forEach((link) => {
-          link.classList.toggle(
-            'active',
-            link.getAttribute('href') === `#${entry.target.id}`
-          );
-        });
-      }
-    });
-  },
-  { threshold: 0.4 }
-);
-
-sections.forEach((s) => navObserver.observe(s));
-
-/* ── Swatch tooltip ripple ─────────────────────────────────── */
-document.querySelectorAll('.swatch').forEach((swatch) => {
-  swatch.addEventListener('click', () => {
-    const hex = swatch.querySelector('.swatch__hex').textContent;
-    navigator.clipboard?.writeText(hex).catch(() => {});
-
-    const ripple = document.createElement('span');
-    ripple.textContent = 'Copied!';
-    ripple.style.cssText = `
-      position:absolute;
-      font-size:0.65rem;
-      letter-spacing:0.08em;
-      font-family:var(--font-sans);
-      color:var(--text-mid);
-      pointer-events:none;
-      animation:rippleFade 1.2s ease forwards;
-    `;
-    swatch.style.position = 'relative';
-    swatch.appendChild(ripple);
-    setTimeout(() => ripple.remove(), 1200);
-  });
-});
-
-const styleEl = document.createElement('style');
-styleEl.textContent = `
-  @keyframes rippleFade {
-    0%   { opacity:0; transform:translateY(0); }
-    20%  { opacity:1; }
-    100% { opacity:0; transform:translateY(-20px); }
-  }
-`;
-document.head.appendChild(styleEl);

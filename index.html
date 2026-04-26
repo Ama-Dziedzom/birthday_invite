@@ -1,320 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kas' Birthday Soirée</title>
+  <title>Kas's Birthday | The 2026 Collection</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Great+Vibes&family=Jost:wght@200;300;400&display=swap"
-    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Great+Vibes&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
 
-  <!-- Floating floral overlays -->
-  <div class="floral-overlay floral-tl" aria-hidden="true"></div>
-  <div class="floral-overlay floral-br" aria-hidden="true"></div>
+  <div class="magazine-texture" aria-hidden="true"></div>
 
-  <!-- ─── HERO ─────────────────────────────────────────────── -->
-  <section class="hero" id="home">
-    <div class="hero__inner fade-in">
-      <p class="hero__pre-text">You are cordially invited to</p>
-      <h1 class="hero__title">Kas' Birthday<br><span>Soirée</span></h1>
-      <div class="hero__divider">
-        <span></span><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 2C6.5 7 2 9 2 14a10 10 0 0020 0c0-5-4.5-7-10-12z" fill="currentColor" />
-        </svg><span></span>
-      </div>
-      <div class="hero__meta">
-        <div class="hero__meta-item">
-          <span class="hero__meta-label">Date</span>
-          <span class="hero__meta-value">Wednesday, 20 May 2026</span>
-        </div>
-        <div class="hero__meta-dot"></div>
-        <div class="hero__meta-item">
-          <span class="hero__meta-label">Time</span>
-          <span class="hero__meta-value">7:00 PM Onwards</span>
-        </div>
-        <div class="hero__meta-dot"></div>
-        <div class="hero__meta-item">
-          <span class="hero__meta-label">Venue</span>
-          <span class="hero__meta-value">The Garden Pavilion</span>
-        </div>
-      </div>
-      <a href="#rsvp" class="btn btn--outline">RSVP</a>
-    </div>
-    <div class="hero__scroll-hint" aria-hidden="true">
-      <span>Scroll</span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <path d="M12 5v14M5 12l7 7 7-7" />
-      </svg>
-    </div>
-  </section>
+  <div class="page-counter" id="pageCounter">1 / 5</div>
 
-  <!-- ─── ABOUT / EVENT DETAILS ─────────────────────────────── -->
-  <section class="about" id="about">
-    <div class="container">
-      <div class="about__grid fade-in">
-        <div class="about__text">
-          <p class="section-label">The Evening</p>
-          <h2 class="section-heading">An Intimate<br><em>Garden Soirée</em></h2>
+  <div class="book" id="book">
+    
+    <!-- ─── PAGE 1: COVER ────────────────────────────────────────── -->
+    <div class="page active" id="p1">
+      <div class="cover-frame">
+        <div class="hero-content">
+          <div class="cover-image-container">
+            <img src="images/cover.png" alt="Kas's Birthday Cover" class="cover-image" />
+          </div>
+          <div class="masthead">
+            <p class="masthead-label">Private Issue</p>
+            <h1 class="masthead-title">KAS</h1>
+            <p class="masthead-sub">The Birthday <em>Soirée</em></p>
+          </div>
+          <div class="cover-corner top-right"><span>EST. 2026</span></div>
+          <div class="cover-footer">
+            <div class="footer-col"><span class="label">Date</span><span class="value">20 May 2026</span></div>
+            <div class="footer-col"><span class="label">Location</span><span class="value">Lusaka, Zambia</span></div>
+            <div class="footer-col footer-col--right">
+              <span class="label">Volume</span><span class="value">XIV</span>
+              <p style="font-size:0.5rem; margin-top:0.5rem; letter-spacing:0.1em; opacity:0.6;">CLICK TO FLIP &rarr;</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── PAGE 2: EDITORIAL ────────────────────────────────────── -->
+    <div class="page" id="p2">
+      <div class="page-content-grid">
+        <div class="editorial-sidebar">
+          <p class="section-label">Editorial</p>
+          <div class="vertical-title">The Invitation</div>
+        </div>
+        <div class="main-column">
+          <h2 class="section-heading">An Intimate<br><em>Garden Picnic</em></h2>
+          <p class="about__body">
+            Join us for an evening of elegance beneath a canopy of soft fairy lights. This is a night to feel beautiful, reconnect, and toast to another year of grace.
+          </p>
+          <p class="about__body"><em>Dress to enchant. Arrive ready to dance.</em></p>
+          <img src="images/accent.png" alt="Accent" style="width:120px; margin-top:3rem; opacity:0.4;" />
+        </div>
+        <div class="details-column">
+          <div class="detail-block"><span class="label">The Date</span><span class="value">20 May, 7:00 PM</span></div>
+          <div class="detail-block"><span class="label">The Location</span><span class="value">Garden Pavilion,<br>Lusaka</span></div>
+          <div class="detail-block"><span class="label">The Theme</span><span class="value">Garden Picnic Formal</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── PAGE 3: STYLE GUIDE ──────────────────────────────────── -->
+    <div class="page" id="p3">
+      <div class="style-guide-spread">
+        <div class="style-note">
+          <p class="section-label">Style Guide</p>
+          <h2 class="section-heading">Dress Code:<br><em>Garden Formal</em></h2>
           <div class="rule"></div>
-          <p class="about__body">
-            Join us for an evening of elegance, laughter, and celebration beneath a canopy of soft fairy lights and
-            blooms. This is a night to feel beautiful, reconnect, and toast to another year of grace and growth.
-          </p>
-          <p class="about__body">
-            Dress to enchant. Arrive ready to dance. Come ready to make memories that linger long after the last glass
-            is raised.
+          <p class="section-sub" style="max-width:100%;">
+            Think flowing gowns, soft florals, and <em>silhouettes</em> that move with the breeze. We invite you to capture the ethereal spirit of a summer garden in full bloom.
           </p>
         </div>
-        <div class="about__details">
-          <div class="detail-card">
-            <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-              <rect x="3" y="4" width="18" height="18" rx="2" />
-              <path d="M16 2v4M8 2v4M3 10h18" />
-            </svg>
-            <span class="detail-label">Date</span>
-            <span class="detail-value">Saturday, 14 June 2026</span>
+        <div class="palette-editorial">
+          <p class="section-label">The Collection</p>
+          <div class="swatch-row">
+            <div class="swatch-mag-large" style="--color:#F5EDE3;"></div>
+            <div class="swatch-mag-large" style="--color:#E8C9C1;"></div>
+            <div class="swatch-mag-large" style="--color:#B5C4B1;"></div>
+            <div class="swatch-mag-large" style="--color:#C9A99B;"></div>
           </div>
-          <div class="detail-card">
-            <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-              <circle cx="12" cy="12" r="9" />
-              <path d="M12 7v5l3 3" />
-            </svg>
-            <span class="detail-label">Time</span>
-            <span class="detail-value">7:00 PM — Late</span>
-          </div>
-          <div class="detail-card">
-            <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-              <path d="M12 21s-8-6.5-8-12a8 8 0 0116 0c0 5.5-8 12-8 12z" />
-              <circle cx="12" cy="9" r="2.5" />
-            </svg>
-            <span class="detail-label">Venue</span>
-            <span class="detail-value">The Garden Pavilion<br>123 Blossom Lane, Accra</span>
-          </div>
-          <div class="detail-card">
-            <svg class="detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-            </svg>
-            <span class="detail-label">Theme</span>
-            <span class="detail-value">Garden Formal</span>
-          </div>
+          <p class="section-sub" style="font-size:0.8rem;">A curated palette of nude, blush, sage, and mauve.</p>
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- ─── DRESS CODE ────────────────────────────────────────── -->
-  <section class="dresscode" id="dresscode">
-    <div class="dresscode__bg" aria-hidden="true"></div>
-    <div class="container">
-      <div class="section-header fade-in">
-        <p class="section-label">Attire</p>
-        <h2 class="section-heading">Dress Code:<br><em>Garden Formal</em></h2>
-        <div class="rule rule--center"></div>
-        <p class="section-sub">Think flowing gowns, soft florals, delicate lace, and silhouettes that move with the
-          breeze. Dress like you stepped off the pages of Vogue's spring editorial.</p>
+    <!-- ─── PAGE 4: VISUALS ──────────────────────────────────────── -->
+    <div class="page" id="p4">
+      <p class="section-label">Mood Board</p>
+      <h2 class="section-heading">The <em>Vibe</em></h2>
+      <div class="gallery-staggered">
+        <div class="gallery-item-mag"><img src="images/garden_blooms.png" alt="1" /><span class="cap">Blooms</span></div>
+        <div class="gallery-item-mag"><img src="images/elegant_silhouettes.png" alt="2" /><span class="cap">Elegance</span></div>
+        <div class="gallery-item-mag"><img src="images/floral_arrangements.png" alt="3" /><span class="cap">Decor</span></div>
+        <div class="gallery-item-mag"><img src="images/twilight_touches.png" alt="4" /><span class="cap">Twilight</span></div>
       </div>
-      <div class="dresscode__grid fade-in">
-        <div class="dresscode__card">
-          <div class="dresscode__card-icon">
-            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M32 8c-4 8-12 12-12 22a12 12 0 0024 0c0-10-8-14-12-22z" stroke="currentColor" stroke-width="1.5"
-                stroke-linecap="round" stroke-linejoin="round" />
-              <path d="M20 56h24M24 40l-4 16M40 40l4 16" stroke="currentColor" stroke-width="1.5"
-                stroke-linecap="round" />
-            </svg>
-          </div>
-          <h3>Flowing Gowns</h3>
-          <p>Long, airy silhouettes in chiffon, silk, or organza. Let the fabric dance.</p>
-        </div>
-        <div class="dresscode__card dresscode__card--featured">
-          <div class="dresscode__card-icon">
-            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M16 12c4 2 8 3 16 3s12-1 16-3l4 16-8 3v22H20V31l-8-3 4-16z" stroke="currentColor"
-                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-              <circle cx="32" cy="10" r="4" stroke="currentColor" stroke-width="1.5" />
-            </svg>
-          </div>
-          <h3>Floral &amp; Soft Glam</h3>
-          <p>Delicate floral prints, embroidered details, or soft pastel tones that capture the garden spirit.</p>
-        </div>
-        <div class="dresscode__card">
-          <div class="dresscode__card-icon">
-            <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M28 8h8l6 12-4 4-6-4-6 4-4-4 6-12z" stroke="currentColor" stroke-width="1.5"
-                stroke-linecap="round" stroke-linejoin="round" />
-              <path d="M20 24l-4 32h32l-4-32" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-            </svg>
-          </div>
-          <h3>Nude &amp; Pastels</h3>
-          <p>Champagne, blush, sage, and soft lilac — wear the palette of the evening.</p>
-        </div>
-      </div>
-      <p class="dresscode__note fade-in"><em>Gentleman:</em> Smart blazers, linen suits, or dress shirts in soft tones.
-        Garden-elegant, not stuffy.</p>
     </div>
-  </section>
 
-  <!-- ─── COLOR PALETTE ─────────────────────────────────────── -->
-  <section class="palette" id="palette">
-    <div class="container">
-      <div class="section-header fade-in">
-        <p class="section-label">The Palette</p>
-        <h2 class="section-heading">Colours of<br><em>the Evening</em></h2>
-        <div class="rule rule--center"></div>
-      </div>
-      <div class="palette__swatches fade-in">
-        <div class="swatch" style="--color:#F5EDE3;">
-          <div class="swatch__circle"></div>
-          <span class="swatch__name">Nude Linen</span>
-          <span class="swatch__hex">#F5EDE3</span>
-        </div>
-        <div class="swatch" style="--color:#E8C9C1;">
-          <div class="swatch__circle"></div>
-          <span class="swatch__name">Blush Rose</span>
-          <span class="swatch__hex">#E8C9C1</span>
-        </div>
-        <div class="swatch" style="--color:#F3E2CB;">
-          <div class="swatch__circle"></div>
-          <span class="swatch__name">Champagne</span>
-          <span class="swatch__hex">#F3E2CB</span>
-        </div>
-        <div class="swatch" style="--color:#B5C4B1;">
-          <div class="swatch__circle"></div>
-          <span class="swatch__name">Sage Green</span>
-          <span class="swatch__hex">#B5C4B1</span>
-        </div>
-        <div class="swatch" style="--color:#D4C5DD;">
-          <div class="swatch__circle"></div>
-          <span class="swatch__name">Soft Lilac</span>
-          <span class="swatch__hex">#D4C5DD</span>
-        </div>
-        <div class="swatch" style="--color:#C9A99B;">
-          <div class="swatch__circle"></div>
-          <span class="swatch__name">Dusty Mauve</span>
-          <span class="swatch__hex">#C9A99B</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── GALLERY / MOOD BOARD ─────────────────────────────── -->
-  <section class="gallery" id="gallery">
-    <div class="container">
-      <div class="section-header fade-in">
-        <p class="section-label">Mood Board</p>
-        <h2 class="section-heading">The <em>Vibe</em></h2>
-        <div class="rule rule--center"></div>
-        <p class="section-sub">A preview of the aesthetic. Soft light, blooms, and elegance.</p>
-      </div>
-      <div class="gallery__grid fade-in">
-        <div class="gallery__item gallery__item--tall">
-          <img src="images/garden_blooms.png" alt="Garden Blooms" class="gallery__img" />
-          <span class="gallery__label">Garden Blooms</span>
-        </div>
-        <div class="gallery__item">
-          <img src="images/elegant_silhouettes.png" alt="Elegant Silhouettes" class="gallery__img" />
-          <span class="gallery__label">Elegant Silhouettes</span>
-        </div>
-        <div class="gallery__item">
-          <img src="images/sage_botanicals.png" alt="Sage & Botanicals" class="gallery__img" />
-          <span class="gallery__label">Sage &amp; Botanicals</span>
-        </div>
-        <div class="gallery__item gallery__item--wide">
-          <img src="images/floral_arrangements.png" alt="Floral Arrangements" class="gallery__img" />
-          <span class="gallery__label">Floral Arrangements</span>
-        </div>
-        <div class="gallery__item">
-          <img src="images/twilight_touches.png" alt="Twilight Touches" class="gallery__img" />
-          <span class="gallery__label">Twilight Touches</span>
-        </div>
-        <div class="gallery__item gallery__item--tall">
-          <img src="images/soft_romance.png" alt="Soft Romance" class="gallery__img" />
-          <span class="gallery__label">Soft Romance</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── RSVP ──────────────────────────────────────────────── -->
-  <section class="rsvp" id="rsvp">
-    <div class="rsvp__bg" aria-hidden="true"></div>
-    <div class="container">
-      <div class="section-header fade-in">
-        <p class="section-label">Join Us</p>
-        <h2 class="section-heading">RSVP</h2>
-        <div class="rule rule--center"></div>
-        <p class="section-sub">Kindly confirm your attendance by <strong>1 June 2026</strong>.</p>
-      </div>
-      <form class="rsvp__form fade-in" id="rsvpForm" novalidate>
-        <div class="form-group">
-          <label for="name">Your Name</label>
-          <input type="text" id="name" name="name" placeholder="Full name" required />
-        </div>
-        <div class="form-group">
-          <label>Will you attend?</label>
-          <div class="radio-group">
-            <label class="radio-label">
-              <input type="radio" name="attendance" value="yes" required />
-              <span class="radio-custom"></span>
-              <span>Joyfully attending</span>
-            </label>
-            <label class="radio-label">
-              <input type="radio" name="attendance" value="no" />
-              <span class="radio-custom"></span>
-              <span>Regretfully unable to attend</span>
-            </label>
+    <!-- ─── PAGE 5: RSVP ─────────────────────────────────────────── -->
+    <div class="page" id="p5">
+      <div class="rsvp-editorial">
+        <img src="images/accent.png" class="rsvp-accent" alt="Accent" />
+        <p class="section-label">Inquiry</p>
+        <h2 class="section-heading">RSVP <em>Soon</em></h2>
+        <p class="section-sub" style="margin-bottom:3rem;">Kindly confirm your attendance by <strong>1 May 2026</strong>.</p>
+        
+        <form class="form-mag" id="rsvpForm">
+          <input type="text" id="name" placeholder="YOUR NAME" required />
+          <div class="radio-group-mag" style="flex-direction:row; justify-content:center; gap:3rem; margin-block:1rem;">
+            <label class="radio-label-mag"><input type="radio" name="attendance" value="yes" required /> <span>Attending</span></label>
+            <label class="radio-label-mag"><input type="radio" name="attendance" value="no" /> <span>Declining</span></label>
           </div>
-        </div>
-        <div class="form-group">
-          <label>Are you bringing a plus one?</label>
-          <div class="radio-group">
-            <label class="radio-label">
-              <input type="radio" name="plusone" value="yes" />
-              <span class="radio-custom"></span>
-              <span>Yes, bringing a guest</span>
-            </label>
-            <label class="radio-label">
-              <input type="radio" name="plusone" value="no" />
-              <span class="radio-custom"></span>
-              <span>No, just me</span>
-            </label>
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="message">A note for the birthday girl <span class="optional">(optional)</span></label>
-          <textarea id="message" name="message" rows="4"
-            placeholder="Share a wish, a memory, or simply say you can't wait…"></textarea>
-        </div>
-        <button type="submit" class="btn btn--filled">Send RSVP</button>
-        <div class="form-success" id="formSuccess" aria-live="polite">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M20 6L9 17l-5-5" />
-          </svg>
-          <p>Thank you! We can't wait to celebrate with you.</p>
-        </div>
-      </form>
+          <button type="submit" class="btn-submit">Submit Inquiry</button>
+          <div id="formSuccess" style="display:none; margin-top:2rem; color:var(--mauve); font-family:var(--font-script); font-size:2rem;">Confirmed. See you there, Kas.</div>
+        </form>
+      </div>
     </div>
-  </section>
 
-  <!-- ─── FOOTER ────────────────────────────────────────────── -->
-  <footer class="footer">
-    <div class="footer__inner">
-      <h2 class="footer__title">Kas' Birthday<br><em>Soirée</em></h2>
-      <p class="footer__date">20 May 2026 &nbsp;·&nbsp; 7:00 PM &nbsp;·&nbsp; The Garden Pavilion</p>
-      <div class="footer__rule"></div>
-      <p class="footer__note">Can't wait to celebrate with you.</p>
-      <p class="footer__small">With love, Kas &hearts;</p>
-    </div>
-  </footer>
+  </div>
+
+  <div class="controls">
+    <button class="btn-nav" id="prevBtn" disabled>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      <span>Previous</span>
+    </button>
+    <button class="btn-nav" id="nextBtn">
+      <span>Next</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l6 6-6 6"/></svg>
+    </button>
+  </div>
 
   <script src="script.js"></script>
 </body>
-
 </html>
