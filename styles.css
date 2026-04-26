@@ -18,8 +18,8 @@
   --font-serif:  'Cormorant Garamond', Georgia, serif;
   --font-sans:   'Jost', 'Helvetica Neue', sans-serif;
 
-  --flip-duration: 1.2s;
-  --flip-ease: cubic-bezier(0.645, 0.045, 0.355, 1);
+  --flip-duration: 1.4s;
+  --flip-ease: cubic-bezier(0.4, 0.0, 0.2, 1);
   --magazine-gutter: clamp(1.5rem, 5vw, 4rem);
 }
 
@@ -160,19 +160,21 @@ body {
 }
 
 @keyframes curveFoldForward {
-  0%   { transform: rotateY(0deg)    skewY(0deg)  scale(1)    translateZ(1px);  }
-  40%  { transform: rotateY(-70deg)  skewY(-3deg) scale(0.99) translateZ(15px); }
-  /* At 90deg the page is edge-on — backface-visibility kicks in here,
-     hiding the back face so the new page behind is never seen through it */
-  60%  { transform: rotateY(-110deg) skewY(3deg)  scale(0.99) translateZ(15px); }
-  100% { transform: rotateY(-180deg) skewY(0deg)  scale(1)    translateZ(1px);  }
+  0%   { transform: rotateY(0deg)    skewY(0deg)   scale(1)    translateZ(1px);  }
+  20%  { transform: rotateY(-30deg)  skewY(-2deg)  scale(1)    translateZ(8px);  }
+  45%  { transform: rotateY(-85deg)  skewY(-6deg)  scale(0.97) translateZ(20px); }
+  55%  { transform: rotateY(-95deg)  skewY(6deg)   scale(0.97) translateZ(20px); }
+  80%  { transform: rotateY(-155deg) skewY(2deg)   scale(1)    translateZ(8px);  }
+  100% { transform: rotateY(-180deg) skewY(0deg)   scale(1)    translateZ(1px);  }
 }
 
 @keyframes curveFoldBackward {
-  0%   { transform: rotateY(-180deg) skewY(0deg)  scale(1)    translateZ(1px);  }
-  40%  { transform: rotateY(-110deg) skewY(3deg)  scale(0.99) translateZ(15px); }
-  60%  { transform: rotateY(-70deg)  skewY(-3deg) scale(0.99) translateZ(15px); }
-  100% { transform: rotateY(0deg)    skewY(0deg)  scale(1)    translateZ(1px);  }
+  0%   { transform: rotateY(-180deg) skewY(0deg)   scale(1)    translateZ(1px);  }
+  20%  { transform: rotateY(-155deg) skewY(2deg)   scale(1)    translateZ(8px);  }
+  45%  { transform: rotateY(-95deg)  skewY(6deg)   scale(0.97) translateZ(20px); }
+  55%  { transform: rotateY(-85deg)  skewY(-6deg)  scale(0.97) translateZ(20px); }
+  80%  { transform: rotateY(-30deg)  skewY(-2deg)  scale(1)    translateZ(8px);  }
+  100% { transform: rotateY(0deg)    skewY(0deg)   scale(1)    translateZ(1px);  }
 }
 
 /* ── Spine shadow effect during flip ──────────────────────── */
