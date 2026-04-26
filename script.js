@@ -6,16 +6,21 @@ const nextBtn = document.getElementById('nextBtn');
 const prevBtn = document.getElementById('prevBtn');
 const pageCounter = document.getElementById('pageCounter');
 
+// Detect touch device for hint
+const flipHint = document.getElementById('flipHint');
+if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+  if (flipHint) flipHint.textContent = 'SWIPE TO FLIP \u2192';
+}
+
 function updatePage(direction = 'forward') {
   pages.forEach((page, i) => {
     const pageNum = i + 1;
     
-    // Reset all custom state classes
+    // Reset all custom state classes except those needed for current animation
     page.classList.remove('active', 'flipped', 'next-up', 'flipping-forward', 'flipping-backward');
     
     if (pageNum === currentPage) {
       page.classList.add('active');
-      // Apply the 'curl' animation if it was just flipped to active
       if (direction === 'backward') page.classList.add('flipping-backward');
     } else if (pageNum < currentPage) {
       page.classList.add('flipped');
@@ -24,7 +29,8 @@ function updatePage(direction = 'forward') {
         page.classList.add('flipping-forward');
       }
       
-      if (pageNum !== currentPage - 1) {
+      // Keep the PREVIOUS page visible during the flip to prevent flickering
+      if (pageNum < currentPage - 1) {
         page.style.visibility = 'hidden';
       } else {
         page.style.visibility = 'visible';
