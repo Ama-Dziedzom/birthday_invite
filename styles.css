@@ -18,13 +18,14 @@
   --font-serif:  'Cormorant Garamond', Georgia, serif;
   --font-sans:   'Jost', 'Helvetica Neue', sans-serif;
 
-  --transition: 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+  --flip-duration: 1.2s;
+  --flip-ease: cubic-bezier(0.645, 0.045, 0.355, 1);
   --magazine-gutter: clamp(1.5rem, 5vw, 4rem);
 }
 
 html, body {
   height: 100%;
-  overflow: hidden; /* NO SCROLLING */
+  overflow: hidden;
   background: var(--nude);
   font-family: var(--font-sans);
   color: var(--text-dark);
@@ -34,7 +35,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  /* perspective must be on the parent of the 3D element */
   perspective: 2000px;
+  perspective-origin: center center;
 }
 
 .magazine-texture {
@@ -53,11 +56,10 @@ body {
   height: min(800px, 85vh);
   background: var(--white);
   box-shadow: 0 50px 100px rgba(0,0,0,0.2);
+  /* preserve-3d is critical — children must exist in the same 3D space */
   transform-style: preserve-3d;
-  transition: transform 1s;
 }
 
-/* Responsive: On mobile, the book is narrower and vertical */
 @media (max-width: 768px) {
   .book {
     width: 90vw;
@@ -65,98 +67,115 @@ body {
   }
 }
 
+/* ── Pages ────────────────────────────────────────────────── */
 .page {
   position: absolute;
   inset: 0;
   padding: var(--magazine-gutter);
   padding-bottom: 8rem;
   background: var(--white);
+
+  /* Flip origin is the LEFT edge — like a real book page turning */
   transform-origin: left center;
-  transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1), z-index 0s, opacity 0.5s, visibility 0s;
+
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  z-index: 1;
+
+  /* Default: hidden and behind everything */
   visibility: hidden;
-  box-shadow: inset 20px 0 30px -20px rgba(0,0,0,0.1);
-  will-change: transform, z-index;
+  z-index: 1;
+
+  /* GPU acceleration — critical for smooth animation on mobile */
+  will-change: transform;
   -webkit-overflow-scrolling: touch;
-  
-  /* CRITICAL: Backface fix */
+
+  /* THE most important fix:
+     backface-visibility: hidden ensures that when a page is rotated
+     past 90deg, it becomes invisible — preventing the "ghost" of the
+     previous page showing through the new one mid-flip */
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+
+  /* Children must also participate in the 3D space */
   transform-style: preserve-3d;
-}
 
-/* Add a physical "Back" side to every page to prevent ghosting */
-.page::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--white);
-  transform: rotateY(180deg);
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  z-index: -1;
-  box-shadow: inset -20px 0 30px -20px rgba(0,0,0,0.1);
-}
+  /* Spine shadow */
+  box-shadow: inset 20px 0 30px -20px rgba(0,0,0,0.1);
 
-/* Hide scrollbar for premium look */
-.page::-webkit-scrollbar {
-  display: none;
-}
-.page {
+  /* Hide scrollbar */
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
 
+.page::-webkit-scrollbar { display: none; }
+
 @media (max-width: 768px) {
-  .page { padding: 1.5rem; padding-bottom: 7rem; justify-content: flex-start; }
+  .page {
+    padding: 1.5rem;
+    padding-bottom: 7rem;
+    justify-content: flex-start;
+  }
 }
 
-/* Curve Fold Effect */
-.page.flipping-forward {
-  animation: curveFoldForward 1.2s cubic-bezier(0.645, 0.045, 0.355, 1) forwards;
-  z-index: 15 !important; /* Ensure flipping page is ALWAYS on top */
-}
+/* ── Page States ──────────────────────────────────────────── */
 
-.page.flipping-backward {
-  animation: curveFoldBackward 1.2s cubic-bezier(0.645, 0.045, 0.355, 1) forwards;
-  z-index: 15 !important;
-}
-
-@keyframes curveFoldForward {
-  0% { transform: rotateY(0deg) skewY(0deg) scale(1) translateZ(1px); }
-  50% { transform: rotateY(-90deg) skewY(-5deg) scale(0.98) translateZ(10px); }
-  100% { transform: rotateY(-180deg) skewY(0deg) scale(1) translateZ(1px); }
-}
-
-@keyframes curveFoldBackward {
-  0% { transform: rotateY(-180deg) skewY(0deg) scale(1) translateZ(1px); }
-  50% { transform: rotateY(-90deg) skewY(5deg) scale(0.98) translateZ(10px); }
-  100% { transform: rotateY(0deg) skewY(0deg) scale(1) translateZ(1px); }
-}
-
-.page.flipped {
-  transform: rotateY(-180deg);
-  visibility: visible;
-  z-index: 5;
-}
-
+/* Currently visible page — flat, facing forward */
 .page.active {
-  z-index: 10;
   visibility: visible;
+  z-index: 10;
   transform: rotateY(0deg);
 }
 
-.page.next-up {
+/* Page that has already been flipped past — rotated away */
+.page.flipped {
+  visibility: hidden; /* Hidden by JS after animation, but set here as fallback */
   z-index: 5;
-  visibility: visible;
+  transform: rotateY(-180deg);
 }
 
-/* Shadows for depth during flip */
+/* The next page, pre-positioned just below the active one */
+.page.next-up {
+  visibility: visible;
+  z-index: 5;
+  transform: rotateY(0deg);
+}
+
+/* ── Flip Animations ──────────────────────────────────────── */
+
+/* Forward flip: active page folds away to the left */
+.page.flipping-forward {
+  visibility: visible;
+  z-index: 15 !important;
+  animation: curveFoldForward var(--flip-duration) var(--flip-ease) forwards;
+}
+
+/* Backward flip: previously flipped page unfolds back from the left */
+.page.flipping-backward {
+  visibility: visible;
+  z-index: 15 !important;
+  animation: curveFoldBackward var(--flip-duration) var(--flip-ease) forwards;
+}
+
+@keyframes curveFoldForward {
+  0%   { transform: rotateY(0deg)    skewY(0deg)  scale(1)    translateZ(1px);  }
+  40%  { transform: rotateY(-70deg)  skewY(-3deg) scale(0.99) translateZ(15px); }
+  /* At 90deg the page is edge-on — backface-visibility kicks in here,
+     hiding the back face so the new page behind is never seen through it */
+  60%  { transform: rotateY(-110deg) skewY(3deg)  scale(0.99) translateZ(15px); }
+  100% { transform: rotateY(-180deg) skewY(0deg)  scale(1)    translateZ(1px);  }
+}
+
+@keyframes curveFoldBackward {
+  0%   { transform: rotateY(-180deg) skewY(0deg)  scale(1)    translateZ(1px);  }
+  40%  { transform: rotateY(-110deg) skewY(3deg)  scale(0.99) translateZ(15px); }
+  60%  { transform: rotateY(-70deg)  skewY(-3deg) scale(0.99) translateZ(15px); }
+  100% { transform: rotateY(0deg)    skewY(0deg)  scale(1)    translateZ(1px);  }
+}
+
+/* ── Spine shadow effect during flip ──────────────────────── */
 .page::after {
   content: '';
   position: absolute;
@@ -165,11 +184,12 @@ body {
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.6s;
+  /* Must also be hidden when page is flipped */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
-.page.flipped::after {
-  opacity: 1;
-}
+.page.flipped::after { opacity: 1; }
 
 /* ── Typography ───────────────────────────────────────────── */
 .section-label {
@@ -198,34 +218,11 @@ body {
 }
 
 /* ── COVER PAGE ───────────────────────────────────────────── */
-.hero-content {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.cover-image-container {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  overflow: hidden;
-}
-
-.cover-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: brightness(0.95) contrast(1.02);
-}
-
-/* ── COVER PAGE (INTERIOR DESIGN STYLE) ───────────────────── */
 .hero { padding: 0; background: var(--white); }
 
 .cover-frame {
   position: absolute;
-  inset: 1.5rem; /* The classic magazine white border */
+  inset: 1.5rem;
   background: var(--white);
   padding: 1rem;
   box-shadow: 0 0 40px rgba(0,0,0,0.05);
@@ -246,6 +243,7 @@ body {
   position: absolute;
   inset: 0;
   z-index: 1;
+  overflow: hidden;
 }
 
 .cover-image {
@@ -255,21 +253,22 @@ body {
   filter: contrast(1.05) saturate(1.1);
 }
 
-/* Subtle gradient for text visibility on image */
 .cover-image-container::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, 
-    rgba(0,0,0,0.6) 0%, 
-    rgba(0,0,0,0.1) 25%, 
-    transparent 50%, 
-    rgba(0,0,0,0.1) 75%, 
-    rgba(0,0,0,0.7) 100%); /* Significantly deeper vignettes */
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.6) 0%,
+    rgba(0,0,0,0.1) 25%,
+    transparent 50%,
+    rgba(0,0,0,0.1) 75%,
+    rgba(0,0,0,0.7) 100%
+  );
   z-index: 2;
 }
 
-/* ── Masthead (Asymmetric AD Style) ───────────────────────── */
+/* ── Masthead ─────────────────────────────────────────────── */
 .masthead {
   position: relative;
   z-index: 10;
@@ -277,7 +276,7 @@ body {
   color: var(--white);
   text-align: left;
   max-width: 650px;
-  text-shadow: 0 4px 30px rgba(0,0,0,0.3); /* Lift text off busy background */
+  text-shadow: 0 4px 30px rgba(0,0,0,0.3);
 }
 
 .masthead-label {
@@ -296,7 +295,7 @@ body {
   line-height: 0.75;
   letter-spacing: -0.06em;
   margin-bottom: 1rem;
-  margin-left: -0.05em; /* Optical alignment */
+  margin-left: -0.05em;
 }
 
 .masthead-sub {
@@ -348,11 +347,11 @@ body {
 
 .top-right {
   top: 4rem;
-  right: 4rem; /* More breathing room */
+  right: 4rem;
   opacity: 0.8;
 }
 
-/* ── Cover Footer (Refined Contrast) ──────────────────────── */
+/* ── Cover Footer ─────────────────────────────────────────── */
 .cover-footer {
   position: relative;
   z-index: 10;
@@ -385,12 +384,9 @@ body {
   font-weight: 400;
 }
 
-.footer-col--right {
-  text-align: right;
-}
+.footer-col--right { text-align: right; }
 
 /* ── Interior Page Layouts ─────────────────────────────────── */
-
 .page-content-grid {
   display: grid;
   grid-template-columns: 0.6fr 1fr 0.8fr;
@@ -420,9 +416,7 @@ body {
   margin-top: auto;
 }
 
-.main-column {
-  padding-top: 2rem;
-}
+.main-column { padding-top: 2rem; }
 
 .details-column {
   background: var(--nude);
@@ -452,7 +446,7 @@ body {
   color: var(--text-dark);
 }
 
-/* Style Guide Layout */
+/* ── Style Guide ──────────────────────────────────────────── */
 .style-guide-spread {
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;
@@ -470,10 +464,7 @@ body {
   gap: 2rem;
 }
 
-.swatch-row {
-  display: flex;
-  gap: 1.5rem;
-}
+.swatch-row { display: flex; gap: 1.5rem; }
 
 .swatch-mag-large {
   width: 60px;
@@ -485,7 +476,7 @@ body {
 
 .swatch-mag-large:hover { transform: translateY(-10px); }
 
-/* Staggered Gallery */
+/* ── Gallery ──────────────────────────────────────────────── */
 .gallery-staggered {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -493,9 +484,7 @@ body {
   margin-top: 3rem;
 }
 
-.gallery-item-mag {
-  position: relative;
-}
+.gallery-item-mag { position: relative; }
 
 .gallery-item-mag img {
   width: 100%;
@@ -504,9 +493,7 @@ body {
   box-shadow: 0 10px 30px rgba(0,0,0,0.05);
 }
 
-.gallery-item-mag:nth-child(even) {
-  transform: translateY(3rem);
-}
+.gallery-item-mag:nth-child(even) { transform: translateY(3rem); }
 
 .gallery-item-mag .cap {
   font-size: 0.55rem;
@@ -517,7 +504,7 @@ body {
   color: var(--text-light);
 }
 
-/* RSVP Refined */
+/* ── RSVP ─────────────────────────────────────────────────── */
 .rsvp-editorial {
   max-width: 500px;
   margin: 0 auto;
@@ -530,120 +517,6 @@ body {
   opacity: 0.6;
 }
 
-/* ── Controls ─────────────────────────────────────────────── */
-.controls {
-  position: fixed;
-  bottom: 1.5rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-  z-index: 200;
-  background: rgba(253, 250, 247, 0.95);
-  backdrop-filter: blur(10px);
-  padding: 0.6rem 1.5rem;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-  border-radius: 2px;
-}
-
-@media (max-width: 768px) {
-  .controls { width: 90%; justify-content: space-between; gap: 1rem; bottom: 1rem; }
-}
-
-.btn-nav {
-  background: transparent;
-  color: var(--text-dark);
-  border: none;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  transition: opacity 0.3s;
-  font-family: var(--font-sans);
-  font-size: 0.55rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  font-weight: 500;
-}
-
-/* ── Mobile Overrides ─────────────────────────────────────── */
-@media (max-width: 768px) {
-  :root { --magazine-gutter: 1.5rem; }
-  
-  /* Cover Specifics */
-  .masthead { 
-    padding: 2.5rem 1.5rem; 
-    text-align: center; /* Center for balance on mobile */
-    max-width: 100%;
-  }
-  .masthead-label { 
-    display: inline-block;
-    font-size: 0.55rem; 
-    letter-spacing: 0.4em;
-    margin-bottom: 0.5rem;
-  }
-  .masthead-title { font-size: 4.8rem; margin-bottom: 0.5rem; }
-  .masthead-sub { 
-    justify-content: center;
-    font-size: 0.65rem; 
-    letter-spacing: 0.2em;
-  }
-  .masthead-sub em { font-size: 2.2em; }
-  
-  .top-right { 
-    position: relative; 
-    top: auto; 
-    right: auto; 
-    text-align: center;
-    margin-bottom: 1rem;
-    font-size: 0.55rem;
-    opacity: 0.6;
-  }
-
-  .cover-footer { 
-    padding: 2rem 1.5rem; 
-    grid-template-columns: 1fr 1fr; 
-    gap: 1.5rem;
-    background: linear-gradient(to top, rgba(0,0,0,0.7) 30%, transparent 100%);
-  }
-  .footer-col .value { font-size: 0.8rem; }
-  .footer-col--right { grid-column: span 2; text-align: center; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 1rem; }
-  
-  .page-content-grid { grid-template-columns: 1fr; gap: 1.5rem; }
-  .editorial-sidebar { display: none; }
-  .details-column { margin-top: 1rem; padding: 1.5rem; gap: 1.5rem; }
-  
-  .style-guide-spread { grid-template-columns: 1fr; gap: 2rem; }
-  .swatch-mag-large { width: 45px; height: 80px; }
-  
-  .gallery-staggered { grid-template-columns: 1fr 1fr; gap: 1rem; }
-  .gallery-item-mag:nth-child(even) { transform: translateY(0); }
-  
-  .section-heading { font-size: 2.5rem; }
-  
-  /* Radio Buttons */
-  .radio-group-mag input[type="radio"] {
-    appearance: none;
-    width: 18px;
-    height: 18px;
-    border: 1px solid var(--text-dark);
-    border-radius: 50%;
-    margin-right: 8px;
-    position: relative;
-    cursor: pointer;
-    vertical-align: middle;
-  }
-  .radio-group-mag input[type="radio"]:checked::after {
-    content: '';
-    position: absolute;
-    inset: 3px;
-    background: var(--mauve);
-    border-radius: 50%;
-  }
-}
-
-/* ── RSVP Form Refinement ─────────────────────────────────── */
 .form-mag {
   display: flex;
   flex-direction: column;
@@ -694,9 +567,130 @@ body {
   cursor: pointer;
   transition: opacity 0.3s;
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-  -webkit-appearance: none; /* Fix for mobile browser styles */
+  -webkit-appearance: none;
 }
 
-.btn-submit:hover {
-  opacity: 0.9;
+.btn-submit:hover { opacity: 0.9; }
+
+/* ── Controls ─────────────────────────────────────────────── */
+.controls {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  z-index: 200;
+  background: rgba(253, 250, 247, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 0.6rem 1.5rem;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+  border-radius: 2px;
+}
+
+@media (max-width: 768px) {
+  .controls {
+    width: 90%;
+    justify-content: space-between;
+    gap: 1rem;
+    bottom: 1rem;
+  }
+}
+
+.btn-nav {
+  background: transparent;
+  color: var(--text-dark);
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: opacity 0.3s;
+  font-family: var(--font-sans);
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.btn-nav:disabled { opacity: 0.3; cursor: default; }
+
+/* ── Mobile Overrides ─────────────────────────────────────── */
+@media (max-width: 768px) {
+  :root { --magazine-gutter: 1.5rem; }
+
+  .masthead {
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    max-width: 100%;
+  }
+  .masthead-label {
+    display: inline-block;
+    font-size: 0.55rem;
+    letter-spacing: 0.4em;
+    margin-bottom: 0.5rem;
+  }
+  .masthead-title { font-size: 4.8rem; margin-bottom: 0.5rem; }
+  .masthead-sub {
+    justify-content: center;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+  }
+  .masthead-sub em { font-size: 2.2em; }
+
+  .top-right {
+    position: relative;
+    top: auto;
+    right: auto;
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 0.55rem;
+    opacity: 0.6;
+  }
+
+  .cover-footer {
+    padding: 2rem 1.5rem;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.7) 30%, transparent 100%);
+  }
+  .footer-col .value { font-size: 0.8rem; }
+  .footer-col--right {
+    grid-column: span 2;
+    text-align: center;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    padding-top: 1rem;
+  }
+
+  .page-content-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+  .editorial-sidebar { display: none; }
+  .details-column { margin-top: 1rem; padding: 1.5rem; gap: 1.5rem; }
+
+  .style-guide-spread { grid-template-columns: 1fr; gap: 2rem; }
+  .swatch-mag-large { width: 45px; height: 80px; }
+
+  .gallery-staggered { grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .gallery-item-mag:nth-child(even) { transform: translateY(0); }
+
+  .section-heading { font-size: 2.5rem; }
+
+  .radio-group-mag input[type="radio"] {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--text-dark);
+    border-radius: 50%;
+    margin-right: 8px;
+    position: relative;
+    cursor: pointer;
+    vertical-align: middle;
+  }
+  .radio-group-mag input[type="radio"]:checked::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    background: var(--mauve);
+    border-radius: 50%;
+  }
 }
